@@ -2,6 +2,7 @@
   "expo": {
     "name": "snap_view",
     "slug": "snap_view",
+    "scheme": "snap_view",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
