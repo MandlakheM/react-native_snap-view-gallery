@@ -7,9 +7,11 @@ import {
 } from "expo-camera";
 import Slider from "@react-native-community/slider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import * as Location from "expo-location";
+import { addImage, fetchImages, initializeDatabase } from "../database";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 const Camera = () => {
-  const [facing, setFacing] = useState<"back" | "front">("front");
+  const [facing, setFacing] = useState<"back" | "front">("back");
   const [zoom, setZoom] = useState(0);
   const [capturedPhotos, setCapturedPhotos] = useState<Array<{ uri: string }>>(
     []
@@ -63,7 +65,30 @@ const Camera = () => {
         base64: false,
         exif: false,
       });
+
       await savedPhoto({ uri: photo.uri });
+
+      // console.log(photo.uri)
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        console.log("Location permission denied");
+        return;
+      }
+      const location = await Location.getCurrentPositionAsync({});
+      const latitude = location.coords.latitude;
+      const longitude = location.coords.longitude;
+
+      const db = await initializeDatabase();
+
+      await addImage(
+        db,
+        photo?.uri,
+        new Date().toISOString(),
+        latitude,
+        longitude
+      );
+      const images = await fetchImages(db);
+      console.log(images);
     }
   }, [savedPhoto]);
 
@@ -73,12 +98,12 @@ const Camera = () => {
 
   if (!permission?.granted) {
     return (
-      <View>
-        <Text>
+      <View style={styles.container}>
+        <Text style={styles.text}>
           snap view needs you to grant camera permissions to use this app
         </Text>
-        <TouchableOpacity onPress={requestPermission}>
-          <Text>grant permission</Text>
+        <TouchableOpacity style={styles.button} onPress={requestPermission}>
+          <Text style={styles.buttonText}>grant permission</Text>
         </TouchableOpacity>
       </View>
     );
@@ -92,13 +117,26 @@ const Camera = () => {
         facing={facing}
         zoom={zoom}
       />
-      <View style={styles.controllsContainer}>
-        <TouchableOpacity onPress={toggleCameraFacing}>
-          <Text>flip</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={takePic} style={styles.recordButton}>
-          <View style={styles.redCircle} />
-        </TouchableOpacity>
+      <View style={styles.controlsContainer}>
+        <View style={styles.row}>
+          <Text style={styles.text}>Zoom: {zoom.toFixed(1)}x</Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={1}
+            value={zoom}
+            onValueChange={handleZoomChange}
+          />
+        </View>
+        <View style={styles.row}>
+          <TouchableOpacity  onPress={toggleCameraFacing}>
+            {/* <Text style={styles.buttonText}>flip</Text> */}
+            <MaterialIcons name="loop" size={24} color="white" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={takePic} style={styles.recordButton}>
+            <View style={styles.redCircle} />
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -113,11 +151,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  controllsContainer: {
-    justifyContent: "center",
-    alignContent: "center",
-    width: "100%",
-    // backgroundColor: "red"
+  controlsContainer: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    padding: 20,
+    backgroundColor: "rgba(0,0,0,0.5)",
   },
   redCircle: {
     backgroundColor: "orangered",
@@ -136,5 +176,24 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "white",
     top: -25,
+  },
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  button: {
+    backgroundColor: "#fff",
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: "#000",
+    fontSize: 16,
+  },
+  slider: {
+    flex: 1,
+    marginLeft: 10,
   },
 });

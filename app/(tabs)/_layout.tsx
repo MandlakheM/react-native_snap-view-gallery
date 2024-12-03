@@ -12,7 +12,7 @@ export default function TabLayout() {
           tabBarIcon: () => (
             <FontAwesome name="map-marker" size={24} color="black" />
           ), 
-        }} 
+        }}  
       />
       <Tabs.Screen 
         name="index" 
