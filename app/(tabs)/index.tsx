@@ -9,11 +9,11 @@ import Slider from "@react-native-community/slider";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as Location from "expo-location";
 import { addImage, fetchImages, initializeDatabase } from "../database";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 const Camera = () => {
   const [facing, setFacing] = useState<"back" | "front">("back");
   const [zoom, setZoom] = useState(0);
-  const [capturedPhotos, setCapturedPhotos] = useState<Array<{ uri: string }>>(
+  const [capturedPhotos, setCapturedPhotos] = useState<Array<{ uri: string | null}>>(
     []
   );
   const [permission, requestPermission] = useCameraPermissions();
@@ -66,7 +66,7 @@ const Camera = () => {
         exif: false,
       });
 
-      await savedPhoto({ uri: photo.uri });
+      // await savedPhoto({ uri: photo.uri });
 
       // console.log(photo.uri)
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -118,7 +118,7 @@ const Camera = () => {
         zoom={zoom}
       />
       <View style={styles.controlsContainer}>
-        <View style={styles.row}>
+        <View style={styles.sliderRow}>
           <Text style={styles.text}>Zoom: {zoom.toFixed(1)}x</Text>
           <Slider
             style={styles.slider}
@@ -129,12 +129,12 @@ const Camera = () => {
           />
         </View>
         <View style={styles.row}>
-          <TouchableOpacity  onPress={toggleCameraFacing}>
-            {/* <Text style={styles.buttonText}>flip</Text> */}
-            <MaterialIcons name="loop" size={24} color="white" />
-          </TouchableOpacity>
           <TouchableOpacity onPress={takePic} style={styles.recordButton}>
             <View style={styles.redCircle} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={toggleCameraFacing}>
+            {/* <Text style={styles.buttonText}>flip</Text> */}
+            <MaterialIcons name="loop" size={24} color="white" />
           </TouchableOpacity>
         </View>
       </View>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     padding: 20,
-    backgroundColor: "rgba(0,0,0,0.5)",
+    backgroundColor: "rgba(0,0,0,0.09)",
   },
   redCircle: {
     backgroundColor: "orangered",
@@ -175,13 +175,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "white",
-    top: -25,
   },
   row: {
+    width: "75%",
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
+    alignSelf: "flex-end",
     marginBottom: 20,
+    // backgroundColor:'black',
   },
   button: {
     backgroundColor: "#fff",
@@ -192,8 +194,18 @@ const styles = StyleSheet.create({
     color: "#000",
     fontSize: 16,
   },
+  sliderRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    marginBottom: 20,
+  },
   slider: {
     flex: 1,
     marginLeft: 10,
+    alignSelf: "center",
+  },
+  text: {
+    color: "white",
   },
 });

@@ -20,7 +20,7 @@ export async function initializeDatabase() {
   }
 }
 
-export async function addImage(db, uri, timestamp, latitude, longitude) {
+export async function addImage(db: any, uri: string, timestamp: string, latitude: string, longitude: string) {
     try {
       const result = await db.runAsync(
         `INSERT INTO images (uri, timestamp, latitude, longitude) VALUES (?, ?, ?, ?)`,
@@ -32,7 +32,7 @@ export async function addImage(db, uri, timestamp, latitude, longitude) {
     }
   }
 
-  export async function fetchImages(db) {
+  export async function fetchImages(db: any) {
     try {
       const rows = await db.getAllAsync(`SELECT * FROM images`);
     //   console.log("Fetched images:", rows);
@@ -42,15 +42,8 @@ export async function addImage(db, uri, timestamp, latitude, longitude) {
     }
   }
 
-  export async function updateImage(db, id, newUri) {
-    try {
-  
-    } catch (error) {
-      console.error("Failed to update image:", error);
-    }
-  }
 
-  export async function deleteImage(db, id) {
+  export async function deleteImage(db: any, id: number) {
     try {
       await db.runAsync(`DELETE FROM images WHERE id = ?`, [id]);
       console.log("Image deleted successfully");
@@ -58,4 +51,20 @@ export async function addImage(db, uri, timestamp, latitude, longitude) {
       console.error("Failed to delete image:", error);
     }
   }
+
+  export async function fetchImagesByDate(db: any, month: string, day: string) {
+    try {
+      const rows = await db.getAllAsync(
+        `
+        SELECT * FROM images 
+        WHERE strftime('%m', timestamp) = ? AND strftime('%d', timestamp) = ?
+        `,
+        [month.padStart(2, '0'), day.padStart(2, '0')] 
+      );
+      return rows;
+    } catch (error) {
+      console.error("Failed to fetch images by date:", error);
+    }
+  }
+  
   

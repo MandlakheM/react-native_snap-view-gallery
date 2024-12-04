@@ -20,7 +20,8 @@
     "react-native-web": "~0.19.13",
     "expo-location": "~18.0.3",
     "expo-sqlite": "~15.0.3",
-    "react-native-maps": "1.18.0"
+    "react-native-maps": "1.18.0",
+    "@react-native-picker/picker": "2.9.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
