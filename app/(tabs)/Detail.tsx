@@ -65,8 +65,8 @@ const Detail = () => {
       const db = await initializeDatabase();
       const filteredPhotos = await fetchImagesByDate(
         db,
-        selectedMonth,
-        selectedDay
+        selectedMonth.padStart(2, "0"),
+        selectedDay.padStart(2, "0")
       );
       setCapturedPhotos(filteredPhotos);
     } catch (error) {
@@ -112,7 +112,7 @@ const Detail = () => {
           <Picker.Item label="Month" value="" />
           {[...Array(12).keys()].map((month) => (
             <Picker.Item
-              key={month + 1}
+              key={month} // Use `month` as the key
               label={`${month + 1}`}
               value={(month + 1).toString().padStart(2, "0")}
             />
@@ -126,8 +126,8 @@ const Detail = () => {
           <Picker.Item label="Day" value="" />
           {[...Array(31).keys()].map((day) => (
             <Picker.Item
-              key={day + 1}
-              label={`day + 1`}
+              key={day} // Use `day` as the key
+              label={`${day + 1}`}
               value={(day + 1).toString().padStart(2, "0")}
             />
           ))}
@@ -144,7 +144,7 @@ const Detail = () => {
           <Text style={{ color: "#fff", textAlign: "center" }}>Search</Text>
         </TouchableOpacity>
       </View>
-      {capturedPhotos ? (
+      {capturedPhotos.length > 0 ? (
         <FlatList
           data={capturedPhotos}
           renderItem={renderPhoto}
@@ -152,10 +152,9 @@ const Detail = () => {
           numColumns={3}
         />
       ) : (
-        <Text style={styles.noPhotosText}>
-          No photos have been captured yet
-        </Text>
+        <Text style={styles.noPhotosText}>No photos found</Text>
       )}
+
       {selectedPhoto && (
         <Modal
           visible={selectedPhoto !== null}

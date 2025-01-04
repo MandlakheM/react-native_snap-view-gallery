@@ -5,7 +5,7 @@ import React from 'react';
 export default function TabLayout() {
   return (
     <Tabs>
-      <Tabs.Screen 
+      {/* <Tabs.Screen 
         name="MapView" 
         options={{ 
           title: "Map", 
@@ -13,7 +13,7 @@ export default function TabLayout() {
             <FontAwesome name="map-marker" size={24} color="black" />
           ), 
         }}  
-      />
+      /> */}
       <Tabs.Screen 
         name="index" 
         options={{ 
