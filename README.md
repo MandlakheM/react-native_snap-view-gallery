@@ -13,6 +13,9 @@ A React Native application that allows users to view, store, and manage their ca
 - **Expo Router**: Handles navigation between screens.
 - **SQLite**: Local database for storing photo metadata.
 
+## App documentation 📑
+
+https://docs.google.com/presentation/d/10bd_sWAsZ0mg8Cn4rI2svf2o_CGO4klPne3dkRQLmfo/edit?usp=sharing
 
 ## Installation 🛠️
 
